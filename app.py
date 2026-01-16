@@ -3,6 +3,7 @@ import os
 import json
 from datetime import date
 import matplotlib.pyplot as plt
+import japanize_matplotlib
 
 DATA_PATH = 'history.json'
 #===================
@@ -120,3 +121,35 @@ st.divider()
 #===================
 # サマリー
 #===================
+history = load_history()
+
+dates = [r['record_id'] for r in history]
+study_hours_list = [r.get('study_hours', 0.0) for r in history]
+satisfaction_list = [r.get('satisfaction') for r in history] 
+
+st.subheader('勉強時間の推移')
+
+fig, ax = plt.subplots()
+
+ax.plot(dates, study_hours_list, marker = 'o')
+ax.set_xlabel('日付')
+ax.set_ylabel('勉強時間 (時間)')
+ax.set_title('日別 勉強時間')
+
+ax.tick_params(axis = 'x', rotation = 45)
+
+st.pyplot(fig)
+
+st.subheader("満足度の推移")
+
+fig2, ax2 = plt.subplots()
+
+ax2.plot(dates, satisfaction_list, marker="o")
+ax2.set_xlabel("日付")
+ax2.set_ylabel("満足度")
+ax2.set_ylim(1, 5)
+ax2.set_title("日別 満足度")
+
+ax2.tick_params(axis="x", rotation=45)
+
+st.pyplot(fig2)
