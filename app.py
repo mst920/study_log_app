@@ -10,11 +10,13 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_PATH = os.path.join(BASE_DIR, "fonts", "IPAexGothic.ttf")
 
 if os.path.exists(FONT_PATH):
-    font_manager.fontManager.addfont(FONT_PATH)
-    rcParams["font.family"] = "IPAexGothic"
+    try:
+        font_manager.fontManager.addfont(FONT_PATH)
+        rcParams["font.family"] = "IPAexGothic"
+    except Exception as e:
+        print("Font load failed:", e)
 else:
     print("Japanese font not found:", FONT_PATH)
-
 
 DATA_PATH = 'history.json'
 #===================
