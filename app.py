@@ -5,6 +5,11 @@ from datetime import date
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rcParams
 
+# 日本語フォント設定（Cloud対応）
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FONT_PATH = os.path.join(BASE_DIR, "fonts", "IPAexGothic.ttf")
+
+font_manager.fontManager.addfont(FONT_PATH)
 rcParams['font.family'] = 'IPAexGothic'
 DATA_PATH = 'history.json'
 #===================
