@@ -9,8 +9,13 @@ from matplotlib import font_manager, rcParams
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_PATH = os.path.join(BASE_DIR, "fonts", "IPAexGothic.ttf")
 
-font_manager.fontManager.addfont(FONT_PATH)
-rcParams['font.family'] = 'IPAexGothic'
+if os.path.exists(FONT_PATH):
+    font_manager.fontManager.addfont(FONT_PATH)
+    rcParams["font.family"] = "IPAexGothic"
+else:
+    print("Japanese font not found:", FONT_PATH)
+
+
 DATA_PATH = 'history.json'
 #===================
 # 関数
