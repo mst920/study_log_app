@@ -60,7 +60,7 @@ def total_study_hours():
     record = find_today_record(history, today_id)
     if record is None:
         return 0.0
-    return record.get('study_hours', 0.0)
+    return round(record.get('study_hours', 0.0), 1)
 
 def add_study_hours():
     hours = st.session_state['study_hours_input']
