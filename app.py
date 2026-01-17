@@ -3,8 +3,9 @@ import os
 import json
 from datetime import date
 import matplotlib.pyplot as plt
-import japanize_matplotlib
+from matplotlib import font_manager, rcParams
 
+rcParams['font.family'] = 'IPAexGothic'
 DATA_PATH = 'history.json'
 #===================
 # 関数
