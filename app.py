@@ -123,33 +123,46 @@ st.divider()
 #===================
 history = load_history()
 
-dates = [r['record_id'] for r in history]
-study_hours_list = [r.get('study_hours', 0.0) for r in history]
-satisfaction_list = [r.get('satisfaction') for r in history] 
+if len(history) < 2:
+    st.info('まだデータが十分ではありません。データが溜まると表示されます')
+else:
+    history = sorted(history, key= lambda r: r['record_id'])
 
-st.subheader('勉強時間の推移')
+    dates = [r['record_id'] for r in history]
+    study_hours_list = [r.get('study_hours', 0.0) for r in history]
+    satisfaction_list = [
+        (r['record_id'], r['satisfaction'])
+        for r in history
+        if r.get('satisfaction') is not None
+    ] 
 
-fig, ax = plt.subplots()
+    st.subheader('勉強時間の推移')
 
-ax.plot(dates, study_hours_list, marker = 'o')
-ax.set_xlabel('日付')
-ax.set_ylabel('勉強時間 (時間)')
-ax.set_title('日別 勉強時間')
+    fig, ax = plt.subplots()
 
-ax.tick_params(axis = 'x', rotation = 45)
+    ax.plot(dates, study_hours_list, marker = 'o')
+    ax.set_xlabel('日付')
+    ax.set_ylabel('勉強時間 (時間)')
+    ax.set_title('日別 勉強時間')
 
-st.pyplot(fig)
+    ax.tick_params(axis = 'x', rotation = 45)
 
-st.subheader("満足度の推移")
+    st.pyplot(fig)
 
-fig2, ax2 = plt.subplots()
+    st.subheader("満足度の推移")
 
-ax2.plot(dates, satisfaction_list, marker="o")
-ax2.set_xlabel("日付")
-ax2.set_ylabel("満足度")
-ax2.set_ylim(1, 5)
-ax2.set_title("日別 満足度")
+    if len(satisfaction_list) < 2:
+         st.info("満足度のデータがまだ十分ではありません。")
+    else:
+        sat_dates, sat_values = zip(*satisfaction_list)
+        fig2, ax2 = plt.subplots()
 
-ax2.tick_params(axis="x", rotation=45)
+        ax2.plot(sat_dates, sat_values, marker="o")
+        ax2.set_xlabel("日付")
+        ax2.set_ylabel("満足度")
+        ax2.set_ylim(1, 5)
+        ax2.set_title("日別 満足度")
 
-st.pyplot(fig2)
+        ax2.tick_params(axis="x", rotation=45)
+
+        st.pyplot(fig2)

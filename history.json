@@ -10,5 +10,11 @@
     "study_hours": 0.5,
     "satisfaction": 2,
     "memo": ""
+  },
+  {
+    "record_id": "2026-01-17",
+    "study_hours": 1.0,
+    "satisfaction": null,
+    "memo": null
   }
 ]
