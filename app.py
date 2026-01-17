@@ -3,20 +3,6 @@ import os
 import json
 from datetime import date
 import matplotlib.pyplot as plt
-from matplotlib import font_manager, rcParams
-
-# 日本語フォント設定（Cloud対応）
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FONT_PATH = os.path.join(BASE_DIR, "fonts", "IPAexGothic.ttf")
-
-if os.path.exists(FONT_PATH):
-    try:
-        font_manager.fontManager.addfont(FONT_PATH)
-        rcParams["font.family"] = "IPAexGothic"
-    except Exception as e:
-        print("Font load failed:", e)
-else:
-    print("Japanese font not found:", FONT_PATH)
 
 DATA_PATH = 'history.json'
 #===================
@@ -155,9 +141,9 @@ else:
     fig, ax = plt.subplots()
 
     ax.plot(dates, study_hours_list, marker = 'o')
-    ax.set_xlabel('日付')
-    ax.set_ylabel('勉強時間 (時間)')
-    ax.set_title('日別 勉強時間')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Hours')
+    ax.set_title('Study Hours (Last 7 Days)')
 
     ax.tick_params(axis = 'x', rotation = 45)
 
@@ -172,10 +158,10 @@ else:
         fig2, ax2 = plt.subplots()
 
         ax2.plot(sat_dates, sat_values, marker="o")
-        ax2.set_xlabel("日付")
-        ax2.set_ylabel("満足度")
+        ax2.set_xlabel("Date")
+        ax2.set_ylabel("Satisfaction")
         ax2.set_ylim(1, 5)
-        ax2.set_title("日別 満足度")
+        ax2.set_title("Daily Satisfaction")
 
         ax2.tick_params(axis="x", rotation=45)
 
