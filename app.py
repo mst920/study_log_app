@@ -127,12 +127,13 @@ if len(history) < 2:
     st.info('まだデータが十分ではありません。データが溜まると表示されます')
 else:
     history = sorted(history, key= lambda r: r['record_id'])
+    recent_history = history[-7:]
 
-    dates = [r['record_id'] for r in history]
-    study_hours_list = [r.get('study_hours', 0.0) for r in history]
+    dates = [r['record_id'] for r in recent_history]
+    study_hours_list = [r.get('study_hours', 0.0) for r in recent_history]
     satisfaction_list = [
         (r['record_id'], r['satisfaction'])
-        for r in history
+        for r in recent_history
         if r.get('satisfaction') is not None
     ] 
 
@@ -166,3 +167,43 @@ else:
         ax2.tick_params(axis="x", rotation=45)
 
         st.pyplot(fig2)
+
+#===================
+# 週の振り返り
+#===================
+today = date.today()
+current_year, current_week, _ = today.isocalendar()
+
+weekly_records = []
+
+for r in history:
+    d = date.fromisoformat(r['record_id'])
+    y, w, _ = d.isocalendar()
+
+    if (y, w) == (current_year, current_week):
+        weekly_records.append(r)
+
+weekly_hours = sum(
+    r.get('study_hours', 0.0)
+    for r in weekly_records
+)
+
+weekly_satisfaction = [
+    r['satisfaction']
+    for r in weekly_records
+    if r['satisfaction'] is not None
+]
+
+if weekly_satisfaction:
+    avg_satisfaction = sum(weekly_satisfaction) / len(weekly_satisfaction)
+else:
+    avg_satisfaction = None
+
+st.subheader('今週のサマリー')
+
+st.metric('今週の勉強時間(合計)', f'{weekly_hours:.1f}時間')
+
+if avg_satisfaction is not None:
+    st.metric('今週の平均満足度', f'{avg_satisfaction:.1f}')
+else:
+    st.info('今週の満足度データはありません')
