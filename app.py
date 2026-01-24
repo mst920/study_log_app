@@ -5,6 +5,16 @@ from datetime import date
 import matplotlib.pyplot as plt
 
 DATA_PATH = 'history.json'
+
+if 'study_hours_h' not in st.session_state:
+    st.session_state['study_hours_h'] = 0
+if 'study_hours_m' not in st.session_state:
+    st.session_state['study_hours_m'] = 0
+if 'satisfaction_input' not in st.session_state:
+    st.session_state['satisfaction_input'] = 3
+if 'memo_input' not in st.session_state:
+    st.session_state['memo_input'] = ''
+ 
 #===================
 # 関数
 #===================
@@ -63,9 +73,32 @@ def total_study_hours():
     return round(record.get('study_hours', 0.0), 1)
 
 def add_study_hours():
-    hours = st.session_state['study_hours_input']
-    upsert_today_hours(study_hours = hours)
-    st.session_state['study_hours_input'] = 0.0
+    hours = st.session_state['study_hours_h']
+    minutes = st.session_state['study_hours_m']
+
+    study_time = hours + minutes / 60
+
+    if study_time <= 0:
+        st.session_state['message_study'] = '時間か分を選択してください'
+        return
+
+    upsert_today_hours(study_hours = study_time)
+
+    st.session_state['study_hours_h'] = 0
+    st.session_state['study_hours_m'] = 0
+
+    st.session_state['message_study'] = '保存しました'
+    
+def input_summary():
+    satisfaction = st.session_state['satisfaction_input']
+    memo = st.session_state['memo_input']
+
+    upsert_today_hours(satisfaction = satisfaction, memo = memo)
+
+    st.session_state['satisfaction_input'] = 3
+    st.session_state['memo_input'] = ''
+
+    st.session_state['message_summary'] = '保存されました'
 
 #===================
 # タイトル
@@ -79,14 +112,26 @@ st.divider()
 #===================
 st.subheader('勉強時間の入力')
 
-study_hours = st.number_input(
-    '勉強時間を入力してください',
-    format = "%.1f",
-    key = 'study_hours_input'
-)
+col1, col2 = st.columns(2)
 
-if st.button('追加する', on_click = add_study_hours):
-    st.success('追加しました')
+with col1:
+    study_hours = st.selectbox(
+            '時間',
+        options = [0, 1, 2, 3, 4],
+        key = 'study_hours_h'
+        )
+
+with col2:
+    study_minutes = st.selectbox(
+            '分',
+            options = [0, 10, 20, 30, 40, 50],
+            key = 'study_hours_m'
+        )
+    
+st.button('追加する', on_click = add_study_hours)
+if 'message_study' in st.session_state:
+    st.warning(st.session_state['message_study'])
+    del st.session_state['message_study']
 
 total = total_study_hours()
 st.metric(
@@ -104,17 +149,21 @@ satisfaction = st.slider(
     '満足度',
     min_value = 1,
     max_value = 5,
-    value = 3
+    value = 3,
+    key = 'satisfaction_input'
 )
 
 memo = st.text_area(
     '振り返りメモ(任意)',
+    key = 'memo_input',
     placeholder = '気になることがあれば'
 )
 
-if st.button('保存する'):
-    upsert_today_hours(satisfaction = satisfaction, memo = memo)
-    st.success('保存が完了しました')
+st.button('保存する', on_click = input_summary)
+
+if 'message_summary' in st.session_state:
+    st.success(st.session_state['message_summary'])
+    del st.session_state['message_summary']
 
 st.divider()
 #===================
@@ -160,7 +209,7 @@ else:
         ax2.plot(sat_dates, sat_values, marker="o")
         ax2.set_xlabel("Date")
         ax2.set_ylabel("Satisfaction")
-        ax2.set_ylim(1, 5)
+        ax2.set_ylim(0.5, 5.5)
         ax2.set_title("Daily Satisfaction")
 
         ax2.tick_params(axis="x", rotation=45)
