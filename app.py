@@ -149,7 +149,6 @@ satisfaction = st.slider(
     '満足度',
     min_value = 1,
     max_value = 5,
-    value = 3,
     key = 'satisfaction_input'
 )
 
